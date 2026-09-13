@@ -1,3 +1,16 @@
 spring:
   application:
     name: otus
+
+server:
+  port: 8000
+
+management:
+  endpoints:
+    web:
+      base-path: /
+  endpoint:
+    health:
+      show-details: never
+      probes:
+        enabled: false
