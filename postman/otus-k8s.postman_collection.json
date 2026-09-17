@@ -1,0 +1,51 @@
+{
+  "info": {
+    "name": "OTUS K8s HW",
+    "description": "Коллекция для проверки ДЗ по Kubernetes (Service, Ingress)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://arch.homework/health",
+          "protocol": "http",
+          "host": ["arch", "homework"],
+          "path": ["health"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Health Check with trailing slash",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://arch.homework/health/",
+          "protocol": "http",
+          "host": ["arch", "homework"],
+          "path": ["health", ""]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Health Check via otusapp rewrite",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://arch.homework/otusapp/evryzh/health",
+          "protocol": "http",
+          "host": ["arch", "homework"],
+          "path": ["otusapp", "evryzh", "health"]
+        }
+      },
+      "response": []
+    }
+  ]
+}
