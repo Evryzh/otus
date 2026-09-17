@@ -19,11 +19,9 @@
 
 Изменения по этому ДЗ оформлены через Pull Request в ветку `develop`:
 
-- **PR:** `https://github.com/Evryzh/otus/pull/N`
+- **PR:** `https://github.com/Evryzh/otus/pull/4`
 - **Base:** `develop`
 - **Compare:** `feature/hw3`
-
-где `N` — номер Pull Request.
 
 Все манифесты лежат в директории `k8s/`:
 
