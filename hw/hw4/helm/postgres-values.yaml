@@ -1,0 +1,10 @@
+auth:
+  username: otus
+  password: otus
+  database: otus
+  postgresPassword: postgres
+
+primary:
+  persistence:
+    enabled: true
+    size: 1Gi

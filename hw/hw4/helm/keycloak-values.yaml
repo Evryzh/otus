@@ -1,0 +1,32 @@
+replicas: 1
+
+command:
+  - "/opt/keycloak/bin/kc.sh"
+  - "start-dev"
+  - "--http-enabled=true"
+  - "--hostname-strict=false"
+
+extraEnv: |
+  - name: KC_BOOTSTRAP_ADMIN_USERNAME
+    value: admin
+  - name: KC_BOOTSTRAP_ADMIN_PASSWORD
+    value: admin
+  - name: KC_DB
+    value: postgres
+  - name: KC_DB_URL
+    value: jdbc:postgresql://postgres-postgresql.otus.svc.cluster.local:5432/keycloak
+  - name: KC_DB_USERNAME
+    value: keycloak
+  - name: KC_DB_PASSWORD
+    value: keycloak
+
+resources:
+  requests:
+    memory: "768Mi"
+  limits:
+    memory: "1Gi"
+
+ingress:
+  enabled: true
+  ingressClassName: nginx
+  hostname: keycloak.homework
