@@ -22,7 +22,7 @@ FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
 # Копируем только готовый JAR из этапа сборки.
-COPY --from=build /app/target/otus-1.2.0.jar app.jar
+COPY --from=build /app/target/otus-1.4.0.jar app.jar
 
 # Открываем порт 8000 (документация, реально порт задаётся в application.yaml).
 EXPOSE 8000

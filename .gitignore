@@ -3,3 +3,5 @@
 # IDE
 /.idea/
 /*.iml
+/hw/hw4/docker/
+/config/.env

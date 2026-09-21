@@ -1,9 +1,45 @@
 spring:
   application:
-    name: otus
+    name: otus-users
+
+  http:
+    clients:
+      connect-timeout: 5s
+      read-timeout: 10s
+
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5433/otus}
+    username: ${SPRING_DATASOURCE_USERNAME:otus}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: false
+
+  flyway:
+    enabled: ${SPRING_FLYWAY_ENABLED:true}
+    locations: classpath:db/migration
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${KEYCLOAK_URL:http://localhost:8080}/realms/${KEYCLOAK_REALM:otus}
+          jwk-set-uri: ${KEYCLOAK_URL:http://localhost:8080}/realms/${KEYCLOAK_REALM:otus}/protocol/openid-connect/certs
 
 server:
-  port: 8000
+  port: ${SERVER_PORT:8000}
+
+logging:
+  level:
+    root: ${LOG_LEVEL:INFO}
+    com.rev.otus: ${LOG_LEVEL:INFO}
 
 management:
   endpoints:
@@ -14,3 +50,21 @@ management:
       show-details: never
       probes:
         enabled: false
+
+springdoc:
+  swagger-ui:
+    # Включение/отключение Swagger UI
+    # Для dev/test обычно true, для prod - false
+    enabled: ${SPRINGDOC_SWAGGER_UI_ENABLED:true}
+  api-docs:
+    # Включение/отключение OpenAPI документации
+    # Для dev/test обычно true, для prod - false
+    enabled: ${SPRINGDOC_API_DOCS_ENABLED:true}
+
+keycloak:
+  base-url: ${KEYCLOAK_URL:http://localhost:8080}
+  realm: ${KEYCLOAK_REALM:otus}
+  client-id: ${KEYCLOAK_CLIENT_ID:otus-users}
+  admin:
+    username: ${KEYCLOAK_ADMIN_USERNAME:admin}
+    password: ${KEYCLOAK_ADMIN_PASSWORD}
