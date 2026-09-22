@@ -32,6 +32,51 @@
 - **Ingress:** nginx, хост `arch.homework`.
 - **CRUD:** профиль пользователя в таблице `customer_profile`.
 
+## Миграции БД
+
+Приложение использует **Flyway** для управления схемой БД. В локальной разработке
+(Docker Compose, IntelliJ) миграции применяются автоматически при старте приложения
+(`SPRING_FLYWAY_ENABLED=true`, дефолт).
+
+В Kubernetes миграции **вынесены в отдельный Job** (`k8s/job-migration.yaml`).
+Это архитектурно правильный подход:
+
+- **Приложению не нужны DDL-права.** Job запускается с теми же кредами к БД, но
+  концептуально приложение работает только с DML (`SELECT`, `INSERT`, `UPDATE`,
+  `DELETE`). Это открывает путь к строгому разделению ролей в БД.
+- **Fail-fast.** Deployment стартует только после того, как Job успешно завершился
+  (`kubectl wait --for=condition=complete`). Если миграция упала — приложение не
+  поднимется на сломанной схеме.
+- **Идемпотентность.** Flyway отслеживает применённые миграции в таблице
+  `flyway_schema_history`. Повторный запуск Job'а ничего не сделает.
+
+### Как это работает
+
+1. **ConfigMap** задаёт `SPRING_FLYWAY_ENABLED=false` — приложение **не** трогает
+   миграции при старте.
+2. **Job** (`k8s/job-migration.yaml`) запускается с профилем `migration`:
+    - `SPRING_PROFILES_ACTIVE=migration` — активирует `application-migration.yaml`
+    - Профиль включает `web-application-type: none` (без Tomcat), `flyway.enabled: true`
+      и `ddl-auto: none`
+    - Job применяет миграции и завершается с кодом 0
+3. **Deployment** стартует после `kubectl wait --for=condition=complete`.
+
+### Профиль `migration`
+
+Файл `src/main/resources/application-migration.yaml`:
+
+```yaml
+spring:
+  main:
+    web-application-type: none
+    banner-mode: off
+  jpa:
+    hibernate:
+      ddl-auto: none
+  flyway:
+    enabled: true
+```
+
 ### Связь с Keycloak
 
 При `POST /api/v1/profile` приложение:

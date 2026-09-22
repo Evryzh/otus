@@ -13,10 +13,15 @@ kubectl create namespace otus
 ### 1.2. Установить PostgreSQL
 
 ```bash
-helm install postgres bitnami/postgresql \
+helm install postgres oci://registry-1.docker.io/bitnamicharts/postgresql \
   -n otus \
   -f hw/hw4/helm/postgres-values.yaml
 ```
+Проверить:
+```bash
+kubectl get pods -n otus -w
+```
+Под `postgres-postgresql-0` должен быть `1/1 Running`. Первый старт занимает 2–3 минуты.
 
 ### 1.3. Создать базу и пользователя для Keycloak
 
@@ -45,7 +50,14 @@ kubectl exec -it -n otus postgres-postgresql-0 -- psql -U postgres -c "\l"
 
 ## 2. Keycloak
 
-### 2.1. Установить Keycloak
+### 2.1. Создать namespace
+
+```bash
+kubectl create namespace keycloak
+```
+
+
+### 2.2. Установить Keycloak
 
 ```bash
 helm repo add codecentric https://codecentric.github.io/helm-charts
@@ -54,8 +66,13 @@ helm install keycloak codecentric/keycloakx \
   -n keycloak \
   -f hw/hw4/helm/keycloak-values.yaml
 ```
+Проверить:
+```bash
+kubectl get pods -n keycloak -w
+```
+Под `keycloak-keycloakx-0` должен быть `1/1 Running`. Первый старт занимает 2–3 минуты.
 
-### 2.2. Исправить хост Ingress
+### 2.3. Исправить хост Ingress
 
 Чарт `codecentric/keycloakx` создаёт Ingress с хостом по умолчанию — `keycloak.keycloak.example.com`, игнорируя параметр `ingress.hostname`. Нужно вручную заменить хост на `keycloak.homework`.
 
@@ -91,7 +108,7 @@ keycloak-keycloakx   nginx   keycloak.homework   10.97.249.195   80      2m
 grep keycloak.homework /etc/hosts || echo "10.97.249.195 keycloak.homework" | sudo tee -a /etc/hosts
 ```
 
-### 2.3. Дождаться готовности
+### 2.4. Дождаться готовности
 
 ```bash
 kubectl get pods -n keycloak
@@ -99,7 +116,7 @@ kubectl get pods -n keycloak
 
 Под `keycloak-keycloakx-0` должен быть `1/1 Running`. Первый старт занимает 2–3 минуты.
 
-### 2.4. Проверить доступ
+### 2.5. Проверить доступ
 
 ```bash
 curl -I http://keycloak.homework/auth/

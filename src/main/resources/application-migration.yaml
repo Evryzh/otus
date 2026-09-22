@@ -1,0 +1,20 @@
+# ============================================================
+# Профиль "migration"
+# ============================================================
+# Используется в Kubernetes Job (k8s/job-migration.yaml) и в Helm hook.
+# Запускает только Flyway-миграции, без web-сервера.
+#
+# Активируется через SPRING_PROFILES_ACTIVE=migration.
+# ============================================================
+
+spring:
+  main:
+    web-application-type: none
+    banner-mode: off
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+
+  flyway:
+    enabled: true
